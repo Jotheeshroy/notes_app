@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_bloc/todo_cubit/to_do_cubit.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ListPage extends StatelessWidget {
   ListPage({super.key});
@@ -28,7 +27,7 @@ class ListPage extends StatelessWidget {
               ),
               const SizedBox(height: 10.0),
               FilledButton.icon(onPressed: () {
-                context.read<ToDoCubit>().toDo_add(_controller.text.trim());
+                setNote();
                 Navigator.pop(context);
               }, 
               label: Text('Add',),
@@ -38,5 +37,9 @@ class ListPage extends StatelessWidget {
         ),
       );
   }
-  
+  final note = Supabase.instance.client;
+  void setNote() async{
+    // ignore: unused_local_variable
+    final sdata = await note.from('To_Do_List').insert({'detail': _controller.text});
+  }
 }

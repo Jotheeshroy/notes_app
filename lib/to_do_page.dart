@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_bloc/models/to_do_sto.dart';
-import 'package:to_do_bloc/todo_cubit/to_do_cubit.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+final supb = Supabase.instance.client;
 
 class ToDoPage extends StatelessWidget {
-   const ToDoPage({super.key});
-
+  ToDoPage({super.key});
+  final gData = supb.from('To_Do_List').stream(primaryKey: ['id']);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,19 +14,25 @@ class ToDoPage extends StatelessWidget {
         backgroundColor: Colors.cyanAccent.shade200,
         centerTitle: true,
       ),
-      body: BlocBuilder<ToDoCubit, List<ToDo_Sto>>(
-        builder: (context, todos) {
-        return ListView.builder(
-          itemCount: todos.length,
-          itemBuilder: (context, index) {
-          final todo = todos[index];
-          return ListTile(
-            title: Text(todo.notes),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: gData, 
+        builder: (context, snapshot) {
+          if(!snapshot.hasData){
+            return Center(
+              child: CircularProgressIndicator()
+            );
+          }  
+          final data = snapshot.data;
+          return ListView.builder(
+            itemCount: data?.length,
+            itemBuilder: (context, index) {
+              final note = data?[index];
+              final todonote = note?['detail'];
+              return Text(todonote);
+            },
           );
         },
-        );
-      },
-      ),
+        ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -41,4 +47,5 @@ class ToDoPage extends StatelessWidget {
       ),
     );
   }
+  
 }
