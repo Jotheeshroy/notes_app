@@ -7,7 +7,6 @@ class ListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ignore: no_leading_underscores_for_local_identifiers
-    
     return Scaffold(
       appBar: AppBar(
         title: Text('Add List'),
